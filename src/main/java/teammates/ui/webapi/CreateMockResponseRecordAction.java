@@ -2,26 +2,18 @@ package teammates.ui.webapi;
 
 import teammates.common.exception.EntityAlreadyExistsException;
 import teammates.common.exception.InvalidParametersException;
-import teammates.common.util.Logger;
 
-/**
- * Cron job: record the total number of responses with timestamp.
- */
-public class RecordResponseCountAction extends AdminOnlyAction {
-
-    private static final Logger log = Logger.getLogger();
+public class CreateMockResponseRecordAction extends AdminOnlyAction {
 
     @Override
-    ActionResult execute() {
+    JsonResult execute() {
         try {
             logic.createFeedbackResponseRecord(
                     logic.getTotalFeedBackResponseCount(), (int) (System.currentTimeMillis() / 1000));
         } catch (InvalidParametersException | EntityAlreadyExistsException e) {
-            log.warning("record feedback response failed " + e.getMessage());
-
-            return new JsonResult("Failed");
+            return new JsonResult(e.getMessage());
         }
-
-        return new JsonResult("Successful");
+        return new JsonResult("Success");
     }
+
 }

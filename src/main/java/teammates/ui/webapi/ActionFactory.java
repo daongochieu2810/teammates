@@ -84,6 +84,7 @@ public class ActionFactory {
 
         //RESPONSE STATS APIs
         map(ResourceURIs.RESPONSE_STATS, GET, GetResponseStatsAction.class);
+        map(ResourceURIs.RESPONSE_MOCK_DATA, GET, CreateMockResponseRecordAction.class);
 
         map(ResourceURIs.SESSIONS_ONGOING, GET, GetOngoingSessionsAction.class);
         map(ResourceURIs.SESSION_STATS, GET, GetSessionResponseStatsAction.class);

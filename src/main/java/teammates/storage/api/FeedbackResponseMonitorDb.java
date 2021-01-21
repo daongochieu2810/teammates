@@ -5,6 +5,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.cmd.LoadType;
@@ -49,6 +50,7 @@ public class FeedbackResponseMonitorDb extends EntitiesDb<FeedbackResponseRecord
         long currentTimeInSec = System.currentTimeMillis() / 1000;
         long startTimeInSec = currentTimeInSec - duration;
         List<Key<FeedbackResponseRecord>> keysOfRecords = load().keys().list();
+        keysOfRecords = keysOfRecords.stream().sorted().collect(Collectors.toList());
         Set<FeedbackResponseRecord> records = new HashSet<>();
         long currentTimestamp = -1;
         for (Key<FeedbackResponseRecord> key : keysOfRecords) {
