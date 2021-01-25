@@ -2,10 +2,8 @@ package teammates.storage.api;
 
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.cmd.LoadType;
@@ -46,23 +44,35 @@ public class FeedbackResponseMonitorDb extends EntitiesDb<FeedbackResponseRecord
     /**
      * Gets a set of response records with chosen duration and interval.
      */
-    public Set<FeedbackResponseRecord> getResponseRecords(long duration, long interval) {
+    public List<FeedbackResponseRecordAttributes> getResponseRecords(long duration, long interval) {
         long currentTimeInSec = System.currentTimeMillis() / 1000;
         long startTimeInSec = currentTimeInSec - duration;
+
         List<Key<FeedbackResponseRecord>> keysOfRecords = load().keys().list();
-        keysOfRecords = keysOfRecords.stream().sorted().collect(Collectors.toList());
-        Set<FeedbackResponseRecord> records = new HashSet<>();
-        long currentTimestamp = -1;
+        List<FeedbackResponseRecord> records = new ArrayList<>();
+
+        long lastTimestamp = -1;
         for (Key<FeedbackResponseRecord> key : keysOfRecords) {
             String[] tokens = key.getName().split("-");
             long timestamp = Long.parseLong(tokens[0]);
-            if (timestamp >= startTimeInSec) {
-                if (currentTimestamp == -1 || timestamp - currentTimestamp == interval) {
-                    records.add(new FeedbackResponseRecord(key.getName()));
-                }
-                currentTimestamp = timestamp;
+            if (timestamp < startTimeInSec) {
+                continue;
+            }
+
+            if (lastTimestamp == -1 || timestamp - lastTimestamp >= interval) {
+                records.add(new FeedbackResponseRecord(key.getName()));
+                lastTimestamp = timestamp;
             }
         }
-        return records;
+
+        return makeAttributes(records);
     }
+
+    /**
+     * Purse old entries, for local development use.
+     */
+    public void purgeResponseRecords() {
+        ofy().delete().entities(load().list()).now();
+    }
+
 }
