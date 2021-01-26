@@ -15,7 +15,7 @@ public class RecordResponseCountAction extends AdminOnlyAction {
     ActionResult execute() {
         try {
             logic.createFeedbackResponseRecord(
-                    logic.getTotalFeedBackResponseCount(), (int) (System.currentTimeMillis() / 1000));
+                    logic.getTotalFeedBackResponseCount(), System.currentTimeMillis());
         } catch (InvalidParametersException | EntityAlreadyExistsException e) {
             log.warning("record feedback response failed " + e.getMessage());
 

@@ -9,7 +9,7 @@ public class CreateMockResponseRecordAction extends AdminOnlyAction {
     JsonResult execute() {
         try {
             logic.createFeedbackResponseRecord(
-                    logic.getTotalFeedBackResponseCount(), (int) (System.currentTimeMillis() / 1000));
+                    logic.getTotalFeedBackResponseCount(), System.currentTimeMillis());
         } catch (InvalidParametersException | EntityAlreadyExistsException e) {
             return new JsonResult(e.getMessage());
         }
